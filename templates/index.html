@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kasir</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<nav class="bg-white border-b px-6 py-3 flex items-center justify-between">
+  <div class="flex gap-6 text-sm font-medium">
+    <a href="/" class="text-blue-600 font-semibold">Kasir</a>
+    <a href="/produk" class="text-gray-500 hover:text-gray-800">Produk</a>
+    {% if session.get("role") == "owner" %}
+    <a href="/laporan" class="text-gray-500 hover:text-gray-800">Laporan</a>
+    <a href="/settings" class="text-gray-500 hover:text-gray-800">Pengaturan</a>
+    {% endif %}
+  </div>
+  <div class="flex items-center gap-4">
+    <span class="text-xs text-gray-400 font-medium" id="jam-sekarang"></span>
+    <span class="text-xs text-gray-500">{{ session.get("user","") }}</span>
+    <a href="/logout" class="text-xs text-gray-400 hover:text-red-500">Keluar</a>
+  </div>
+</nav>
+
+<div class="max-w-5xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Panel kiri: daftar produk -->
+  <div class="bg-white rounded-xl border p-5">
+    <h2 class="font-semibold text-gray-800 mb-4">Pilih Produk</h2>
+    <input id="search-input" type="text" placeholder="Cari nama produk..."
+      class="w-full border rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      oninput="filterProduk(this.value)">
+    <div id="daftar-produk" class="space-y-2 max-h-96 overflow-y-auto pr-1">
+      {% for p in produk %}
+      <div class="produk-item flex justify-between items-center p-3 border rounded-lg hover:bg-blue-50 cursor-pointer transition"
+           data-nama="{{ p.nama }}" data-stok="{{ p.stok }}"
+           onclick="tambahKeKeranjang('{{ p.nama }}', {{ p.harga }}, {{ p.stok }})">
+        <div>
+          <p class="text-sm font-medium text-gray-800 capitalize">{{ p.nama }}</p>
+          <p class="text-xs text-gray-400">Stok: <span class="stok-{{ p.id }}">{{ p.stok }}</span></p>
+        </div>
+        <span class="text-sm font-semibold text-blue-600">Rp {{ "{:,}".format(p.harga) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Panel kanan: keranjang -->
+  <div class="bg-white rounded-xl border p-5 flex flex-col">
+    <h2 class="font-semibold text-gray-800 mb-4">Keranjang</h2>
+    <div id="keranjang" class="flex-1 space-y-2 min-h-[180px]">
+      <p class="text-sm text-gray-400 text-center py-8">Keranjang kosong</p>
+    </div>
+
+    <!-- Diskon -->
+    <div class="border-t pt-4 mt-3 space-y-3">
+      <div class="flex items-center gap-3">
+        <label class="text-sm text-gray-500 whitespace-nowrap">Diskon (%)</label>
+        <input id="input-diskon" type="number" min="0" max="100" value="0" placeholder="0"
+          class="w-24 border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          oninput="hitungTotal()">
+        <span id="diskon-rp" class="text-sm text-orange-500 font-medium"></span>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-3 space-y-1.5 text-sm">
+        <div class="flex justify-between text-gray-500">
+          <span>Subtotal</span>
+          <span id="subtotal-display">Rp 0</span>
+        </div>
+        <div class="flex justify-between text-orange-500" id="baris-diskon" style="display:none!important">
+          <span>Diskon</span>
+          <span id="diskon-display">- Rp 0</span>
+        </div>
+        <div class="flex justify-between font-semibold text-gray-800 text-base border-t pt-1.5 mt-1">
+          <span>Total</span>
+          <span id="total-display">Rp 0</span>
+        </div>
+      </div>
+
+      <div class="flex gap-3 items-center">
+        <div class="flex-1">
+          <input id="input-bayar" type="number" placeholder="Uang bayar (Rp)"
+            class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+            oninput="hitungKembalian()">
+        </div>
+        <div class="text-right min-w-[90px]">
+          <p class="text-xs text-gray-400">Kembalian</p>
+          <p id="kembalian-display" class="font-semibold text-green-600 text-sm">Rp 0</p>
+        </div>
+      </div>
+
+      <button onclick="prosesTransaksi()"
+        class="w-full bg-blue-600 text-white rounded-lg py-3 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition">
+        Bayar & Cetak Struk
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal struk -->
+<div id="modal-struk" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-xl w-full max-w-sm shadow-2xl">
+    <div id="area-print" class="p-6">
+      <div class="text-center mb-4">
+        <p class="font-bold text-lg tracking-wide">{{ nama_toko }}</p>
+        <p class="text-xs text-gray-400 mt-1" id="struk-waktu"></p>
+      <p class="text-xs text-gray-400" id="struk-alamat">{{ get_setting("alamat_toko","") }}</p>
+        <div class="border-t border-dashed mt-3"></div>
+      </div>
+      <div id="struk-items" class="text-sm space-y-1.5 mb-3"></div>
+      <div class="border-t border-dashed pt-3 space-y-1.5 text-sm" id="struk-total"></div>
+      <p class="text-center text-xs text-gray-400 mt-4">— Terima kasih telah berbelanja —</p>
+    </div>
+    <div class="flex gap-2 px-6 pb-6">
+      <button onclick="printStruk()" class="flex-1 bg-blue-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-blue-700">Print Struk</button>
+      <button onclick="tutupStruk()" class="flex-1 border rounded-lg py-2.5 text-sm hover:bg-gray-50">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  body * { visibility: hidden; }
+  #area-print, #area-print * { visibility: visible; }
+  #area-print { position: fixed; top: 0; left: 0; width: 80mm; font-size: 11px; }
+}
+</style>
+
+<script>
+let keranjang = [];
+let subtotalBelanja = 0;
+let totalBelanja = 0;
+let diskonRp = 0;
+
+// Jam realtime di navbar
+function updateJam() {
+  document.getElementById('jam-sekarang').textContent = new Date().toLocaleTimeString('id-ID');
+}
+setInterval(updateJam, 1000); updateJam();
+
+function formatRp(n) {
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+}
+
+function filterProduk(q) {
+  document.querySelectorAll('.produk-item').forEach(el => {
+    el.style.display = el.dataset.nama.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function tambahKeKeranjang(nama, harga, stok) {
+  const idx = keranjang.findIndex(i => i.nama === nama);
+  if (idx >= 0) {
+    if (keranjang[idx].jumlah >= stok) {
+      alert('Stok ' + nama + ' tidak mencukupi!'); return;
+    }
+    keranjang[idx].jumlah++;
+    keranjang[idx].subtotal = keranjang[idx].jumlah * harga;
+  } else {
+    if (stok <= 0) { alert('Stok habis!'); return; }
+    keranjang.push({ nama, harga, jumlah: 1, subtotal: harga });
+  }
+  renderKeranjang();
+}
+
+function ubahJumlah(idx, delta) {
+  if (idx < 0 || idx >= keranjang.length) return;
+  keranjang[idx].jumlah += delta;
+  if (keranjang[idx].jumlah <= 0) {
+    keranjang.splice(idx, 1);
+  } else {
+    keranjang[idx].subtotal = keranjang[idx].jumlah * keranjang[idx].harga;
+  }
+  renderKeranjang();
+}
+
+function renderKeranjang() {
+  const el = document.getElementById('keranjang');
+  if (keranjang.length === 0) {
+    el.innerHTML = '<p class="text-sm text-gray-400 text-center py-8">Keranjang kosong</p>';
+  } else {
+    el.innerHTML = keranjang.map((item, idx) => `
+      <div class="flex items-center justify-between p-2.5 border rounded-lg text-sm">
+        <div class="flex-1 min-w-0 mr-2">
+          <p class="font-medium text-gray-800 capitalize truncate">${item.nama}</p>
+          <p class="text-xs text-gray-400">${formatRp(item.harga)} / pcs</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="ubahJumlah(${idx},-1)" class="w-7 h-7 border rounded-lg text-gray-500 hover:bg-red-50 hover:border-red-200 text-base flex items-center justify-center">−</button>
+          <span class="w-7 text-center font-semibold text-sm">${item.jumlah}</span>
+          <button onclick="ubahJumlah(${idx},1)" class="w-7 h-7 border rounded-lg text-gray-500 hover:bg-blue-50 hover:border-blue-200 text-base flex items-center justify-center">+</button>
+          <span class="w-20 text-right font-semibold text-blue-600 text-sm">${formatRp(item.subtotal)}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+  hitungTotal();
+}
+
+function hitungTotal() {
+  subtotalBelanja = keranjang.reduce((s, i) => s + i.subtotal, 0);
+  const persen = parseInt(document.getElementById('input-diskon').value) || 0;
+  diskonRp = Math.round(subtotalBelanja * persen / 100);
+  totalBelanja = subtotalBelanja - diskonRp;
+
+  document.getElementById('subtotal-display').textContent = formatRp(subtotalBelanja);
+  document.getElementById('total-display').textContent = formatRp(totalBelanja);
+
+  const barisDiskon = document.getElementById('baris-diskon');
+  if (diskonRp > 0) {
+    barisDiskon.style.removeProperty('display');
+    document.getElementById('diskon-display').textContent = '- ' + formatRp(diskonRp);
+    document.getElementById('diskon-rp').textContent = '= hemat ' + formatRp(diskonRp);
+  } else {
+    barisDiskon.style.setProperty('display', 'none', 'important');
+    document.getElementById('diskon-rp').textContent = '';
+  }
+  hitungKembalian();
+}
+
+function hitungKembalian() {
+  const bayar = parseInt(document.getElementById('input-bayar').value) || 0;
+  const kembalian = bayar - totalBelanja;
+  const el = document.getElementById('kembalian-display');
+  if (bayar === 0) {
+    el.textContent = 'Rp 0';
+    el.className = 'font-semibold text-green-600 text-sm';
+  } else if (kembalian < 0) {
+    el.textContent = 'kurang ' + formatRp(Math.abs(kembalian));
+    el.className = 'font-semibold text-red-500 text-sm';
+  } else {
+    el.textContent = formatRp(kembalian);
+    el.className = 'font-semibold text-green-600 text-sm';
+  }
+}
+
+async function prosesTransaksi() {
+  if (keranjang.length === 0) return alert('Keranjang masih kosong!');
+  const bayar = parseInt(document.getElementById('input-bayar').value) || 0;
+  const diskonPersen = parseInt(document.getElementById('input-diskon').value) || 0;
+  if (bayar === 0) return alert('Masukkan uang bayar dulu!');
+  if (bayar < totalBelanja) return alert('Uang bayar kurang!\nKurang: ' + formatRp(totalBelanja - bayar));
+
+  const itemsUntukStruk = [...keranjang];
+
+  const res = await fetch('/api/transaksi', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items: keranjang, bayar, diskon: diskonPersen })
+  });
+  const data = await res.json();
+  if (data.error) return alert(data.error);
+
+  keranjang = [];
+  document.getElementById('input-bayar').value = '';
+  document.getElementById('input-diskon').value = '0';
+  renderKeranjang();
+
+  tampilStruk(data, itemsUntukStruk);
+}
+
+function tampilStruk(data, items) {
+  document.getElementById('struk-waktu').textContent = new Date().toLocaleString('id-ID');
+
+  document.getElementById('struk-items').innerHTML = items.map(item => `
+    <div class="flex justify-between">
+      <span class="capitalize flex-1 truncate mr-2">${item.nama}</span>
+      <span class="text-gray-500 mr-2">${item.jumlah}×${formatRp(item.harga)}</span>
+      <span class="font-medium">${formatRp(item.subtotal)}</span>
+    </div>
+  `).join('');
+
+  let totalHtml = `
+    <div class="flex justify-between text-gray-500">
+      <span>Subtotal</span><span>${formatRp(data.subtotal)}</span>
+    </div>
+  `;
+  if (data.diskon_rp > 0) {
+    totalHtml += `<div class="flex justify-between text-orange-500">
+      <span>Diskon</span><span>- ${formatRp(data.diskon_rp)}</span>
+    </div>`;
+  }
+  totalHtml += `
+    <div class="flex justify-between font-bold text-base border-t pt-1.5 mt-1">
+      <span>TOTAL</span><span>${formatRp(data.total)}</span>
+    </div>
+    <div class="flex justify-between text-gray-500">
+      <span>Bayar</span><span>${formatRp(data.bayar)}</span>
+    </div>
+    <div class="flex justify-between text-green-600 font-semibold">
+      <span>Kembalian</span><span>${formatRp(data.kembalian)}</span>
+    </div>
+  `;
+  document.getElementById('struk-total').innerHTML = totalHtml;
+  document.getElementById('modal-struk').classList.remove('hidden');
+}
+
+function printStruk() { window.print(); }
+function tutupStruk() { document.getElementById('modal-struk').classList.add('hidden'); }
+</script>
+</body>
+</html>

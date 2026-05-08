@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengaturan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<nav class="bg-white border-b px-6 py-3 flex items-center justify-between">
+  <div class="flex gap-6 text-sm font-medium">
+    <a href="/" class="text-gray-500 hover:text-gray-800">Kasir</a>
+    <a href="/produk" class="text-gray-500 hover:text-gray-800">Produk</a>
+    <a href="/laporan" class="text-gray-500 hover:text-gray-800">Laporan</a>
+    <a href="/settings" class="text-blue-600 font-semibold">Pengaturan</a>
+  </div>
+  <a href="/logout" class="text-xs text-gray-400 hover:text-red-500">Keluar</a>
+</nav>
+
+<div class="max-w-xl mx-auto p-6">
+  <h1 class="text-xl font-semibold text-gray-800 mb-6">Pengaturan Toko</h1>
+
+  {% if pesan %}
+  <div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-6">
+    ✓ {{ pesan }}
+  </div>
+  {% endif %}
+
+  <form method="POST" class="space-y-6">
+
+    <div class="bg-white border rounded-xl p-5 space-y-4">
+      <h2 class="font-medium text-gray-700">Identitas Toko</h2>
+      <div>
+        <label class="text-sm font-medium text-gray-600 mb-1.5 block">Nama Toko</label>
+        <input name="nama_toko" value="{{ data.nama_toko }}"
+          class="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 mb-1.5 block">Alamat (opsional)</label>
+        <input name="alamat_toko" value="{{ data.alamat_toko }}" placeholder="Jl. ..."
+          class="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 mb-1.5 block">No. Telepon (opsional)</label>
+        <input name="telp_toko" value="{{ data.telp_toko }}" placeholder="08xx..."
+          class="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 mb-1.5 block">Pesan Footer Struk</label>
+        <input name="footer_struk" value="{{ data.footer_struk }}"
+          class="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      </div>
+    </div>
+
+    <div class="bg-white border rounded-xl p-5 space-y-4">
+      <h2 class="font-medium text-gray-700">Password Akun</h2>
+      <p class="text-xs text-gray-400">Kosongkan jika tidak ingin mengubah password</p>
+      <div>
+        <label class="text-sm font-medium text-gray-600 mb-1.5 block">Password Owner (username: owner)</label>
+        <input name="owner_password" type="password" placeholder="Password baru..."
+          class="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 mb-1.5 block">Password Kasir (username: kasir)</label>
+        <input name="kasir_password" type="password" placeholder="Password baru..."
+          class="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      </div>
+    </div>
+
+    <button type="submit"
+      class="w-full bg-blue-600 text-white rounded-lg py-3 text-sm font-semibold hover:bg-blue-700 transition">
+      Simpan Pengaturan
+    </button>
+  </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelola Produk</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<nav class="bg-white border-b px-6 py-3 flex items-center justify-between">
+  <div class="flex gap-6 text-sm font-medium">
+    <a href="/" class="text-gray-500 hover:text-gray-800">Kasir</a>
+    <a href="/produk" class="text-blue-600 font-semibold">Produk</a>
+    {% if session.get("role") == "owner" %}
+    <a href="/laporan" class="text-gray-500 hover:text-gray-800">Laporan</a>
+    <a href="/settings" class="text-gray-500 hover:text-gray-800">Pengaturan</a>
+    {% endif %}
+  </div>
+  <a href="/logout" class="text-xs text-gray-400 hover:text-red-500">Keluar</a>
+</nav>
+<div class="max-w-3xl mx-auto p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-xl font-semibold text-gray-800">Kelola Produk</h1>
+    <button onclick="document.getElementById('form-tambah').classList.toggle('hidden')"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">+ Tambah Produk</button>
+  </div>
+
+  <div id="form-tambah" class="hidden bg-white border rounded-xl p-5 mb-6">
+    <h2 class="font-medium text-gray-700 mb-4">Produk Baru</h2>
+    <form id="form-tambah-data" class="grid grid-cols-3 gap-3">
+      <input name="nama" placeholder="Nama produk" required
+        class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      <input name="harga" type="number" placeholder="Harga" required
+        class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      <input name="stok" type="number" placeholder="Stok" value="0"
+        class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+      <button type="submit" class="col-span-3 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium">Simpan</button>
+    </form>
+  </div>
+
+  <div class="bg-white border rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          <th class="text-left px-5 py-3 font-medium text-gray-600">Nama</th>
+          <th class="text-right px-5 py-3 font-medium text-gray-600">Harga</th>
+          <th class="text-right px-5 py-3 font-medium text-gray-600">Stok</th>
+          <th class="px-5 py-3"></th>
+        </tr>
+      </thead>
+      <tbody id="tabel-produk">
+        {% for p in produk %}
+        <tr class="border-b last:border-0 hover:bg-gray-50" id="row-{{ p.id }}">
+          <td class="px-5 py-3 capitalize text-gray-800">{{ p.nama }}</td>
+          <td class="px-5 py-3 text-right text-blue-600 font-medium">Rp {{ "{:,}".format(p.harga) }}</td>
+          <td class="px-5 py-3 text-right text-gray-600">{{ p.stok }}</td>
+          <td class="px-5 py-3 text-right">
+            <form method="POST" action="/produk/hapus/{{ p.id }}"
+              onsubmit="return confirm('Hapus {{ p.nama }}?')" class="inline">
+              <button class="text-red-400 hover:text-red-600 text-xs">Hapus</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+document.getElementById('form-tambah-data').onsubmit = async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  await fetch('/produk/tambah', { method: 'POST', body: fd });
+  location.reload();
+};
+</script>
+</body>
+</html>
