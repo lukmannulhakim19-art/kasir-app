@@ -4,7 +4,7 @@
 > Aplikasi kasir berbasis web yang ringan, cepat, dan mudah digunakan — cocok untuk warung, toko kelontong, dan UMKM kecil menengah. Dibangun dengan Flask \& SQLite, dapat diakses dari HP maupun laptop tanpa install apapun.
 
 🔗 **Live Demo:** [lukmannulhakim19.pythonanywhere.com](https://lukmannulhakim19.pythonanywhere.com)  
-👤 **Demo Login:** username `kasir` / password `kasir123`
+👤 **Demo Login:** hubungi saya
 
 \---
 
