@@ -25,9 +25,6 @@
 \---
 
 ## 🖥️ Screenshot
-
-## 🖥️ Screenshot
-
 <img src="screenshot7.jpeg" width="250">
 
 
