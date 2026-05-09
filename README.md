@@ -26,7 +26,7 @@
 
 ## 🖥️ Screenshot
 
-> ## 🖥️ Screenshot
+> ## 🖥️screenshot1.jpeg
 
 ![Screenshot 1](WhatsApp%20Image%202026-05-09%20at%201.48.20%20PM.jpeg)
 ![Screenshot 2](WhatsApp%20Image%202026-05-09%20at%201.48.20%20PM%20(1).jpeg)
