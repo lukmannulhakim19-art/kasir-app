@@ -26,7 +26,7 @@
 
 ## 🖥️ Screenshot
 <img src="screenshot7.jpeg" width="250">
-
+<img src="screenshot6.jpeg" width="250">
 
 
 
