@@ -25,7 +25,7 @@
 \---
 
 ## 🖥️ Screenshot
-screenshot7.jpeg
+
 
 
 
