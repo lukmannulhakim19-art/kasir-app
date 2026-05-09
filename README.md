@@ -26,7 +26,11 @@
 
 ## 🖥️ Screenshot
 
-https://raw.githubusercontent.com/lukmannulhakim19-art/kasir-app/3b1184bff2131e36e245fe1f6292af81e20585b8/screenshot7.jpeg
+## 🖥️ Screenshot
+
+<img src="screenshot7.jpeg" width="250">
+
+
 
 
 
