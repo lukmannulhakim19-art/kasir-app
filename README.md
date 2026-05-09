@@ -25,9 +25,9 @@
 \---
 
 ## 🖥️ Screenshot
+WhatsApp Image 2026-05-09 at 1.48.20 PM (1).jpeg
 
 
-<img width="793" height="301" alt="image" src="https://github.com/user-attachments/assets/43216ebb-59b6-4091-83fc-2706f55e2d28" />
 
 
 \---
