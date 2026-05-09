@@ -1,10 +1,5 @@
 # 🛒 Kasir App — Aplikasi Kasir Web Modern untuk UMKM
 
-!\[Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
-!\[Flask](https://img.shields.io/badge/Flask-3.0-black?logo=flask)
-!\[SQLite](https://img.shields.io/badge/SQLite-database-lightgrey?logo=sqlite)
-!\[Live Demo](https://img.shields.io/badge/Live%20Demo-Online-brightgreen)
-!\[License](https://img.shields.io/badge/License-MIT-yellow)
 
 > Aplikasi kasir berbasis web yang ringan, cepat, dan mudah digunakan — cocok untuk warung, toko kelontong, dan UMKM kecil menengah. Dibangun dengan Flask \& SQLite, dapat diakses dari HP maupun laptop tanpa install apapun.
 
