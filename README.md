@@ -26,14 +26,8 @@
 
 ## 🖥️ Screenshot
 
-> ## 🖥️screenshot1.jpeg
 
-![Screenshot 1](WhatsApp%20Image%202026-05-09%20at%201.48.20%20PM.jpeg)
-![Screenshot 2](WhatsApp%20Image%202026-05-09%20at%201.48.20%20PM%20(1).jpeg)
-![Screenshot 3](WhatsApp%20Image%202026-05-09%20at%201.48.20%20PM%20(2).jpeg)
-![Screenshot 4](WhatsApp%20Image%202026-05-09%20at%201.48.21%20PM.jpeg)
-![Screenshot 5](WhatsApp%20Image%202026-05-09%20at%201.48.21%20PM%20(1).jpeg)
-![Screenshot 6](WhatsApp%20Image%202026-05-09%20at%201.48.22%20PM.jpeg)
+
 
 \---
 
