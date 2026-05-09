@@ -27,6 +27,7 @@
 ## 🖥️ Screenshot
 
 
+<img width="793" height="301" alt="image" src="https://github.com/user-attachments/assets/43216ebb-59b6-4091-83fc-2706f55e2d28" />
 
 
 \---
