@@ -25,7 +25,7 @@
 \---
 
 ## 🖥️ Screenshot
-![Screenshot 1](https://raw.githubusercontent.com/lukmannulhakim19-art/kasir-app/main/screenshot1.jpeg)
+screenshot7.jpeg
 
 
 
